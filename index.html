@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>스페인어 동사 구별 테스트</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: Arial, "Malgun Gothic", sans-serif;
+    background: #f5f6f8;
+    margin: 0;
+    padding: 24px 12px;
+    color: #202124;
+  }
+  .quiz {
+    max-width: 650px;
+    margin: auto;
+    background: white;
+    border: 1px solid #e0e3e8;
+    border-radius: 16px;
+    padding: 24px;
+  }
+  h1 { font-size: 23px; margin: 0 0 10px; }
+  .intro { color: #666; font-size: 14px; }
+  .question {
+    padding: 22px 0;
+    border-bottom: 1px solid #e8e8e8;
+  }
+  .question h2 {
+    font-size: 16px;
+    line-height: 1.7;
+    margin: 0 0 8px;
+  }
+  .spanish {
+    color: #666;
+    font-size: 15px;
+    margin-bottom: 14px;
+  }
+  label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 8px;
+    cursor: pointer;
+    border-radius: 8px;
+  }
+  label:hover { background: #f5f6f8; }
+  input[type="radio"] {
+    accent-color: #16a085;
+    width: 18px;
+    height: 18px;
+  }
+  .feedback {
+    display: none;
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 9px;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .correct { background: #e8f7ef; color: #166534; }
+  .wrong { background: #f2f3f5; color: #333; }
+  button {
+    width: 100%;
+    margin-top: 22px;
+    padding: 13px;
+    border: 1px solid #ddd;
+    border-radius: 9px;
+    background: white;
+    font-size: 15px;
+    cursor: pointer;
+  }
+  button:hover { background: #f5f6f8; }
+</style>
+</head>
+<body>
+
+<main class="quiz">
+  <h1>스페인어 동사 구별 테스트</h1>
+  <p class="intro">
+    emigrar · inmigrar · trasladar<br>
+    정답을 선택하면 해설이 나타납니다.
+  </p>
+  <div id="questions"></div>
+  <button type="button" onclick="resetQuiz()">
+    다시 풀기
+  </button>
+</main>
+
+<script>
+const questions = [
+  {
+    korean: "많은 젊은이들이 일자리를 찾아 자신의 나라를 떠납니다.",
+    spanish: "Muchos jóvenes ___ de su país para buscar trabajo.",
+    options: ["emigran", "inmigran", "trasladan"],
+    answer: 0,
+    explanation: "출발 국가를 떠나는 관점이므로 emigrar가 적절합니다."
+  },
+  {
+    korean: "회사가 본사를 발렌시아로 이전했습니다.",
+    spanish: "La empresa ___ su sede a Valencia.",
+    options: ["emigró", "inmigró", "trasladó"],
+    answer: 2,
+    explanation: "본사라는 목적어를 옮기므로 trasladar를 사용합니다."
+  },
+  {
+    korean: "저는 직장 때문에 다른 도시로 이사했습니다.",
+    spanish: "Me ___ a otra ciudad por trabajo.",
+    options: ["trasladé", "inmigré", "trasladó"],
+    answer: 0,
+    explanation: "자신이 이동하므로 trasladarse의 me trasladé가 적절합니다."
+  }
+];
+
+const container = document.getElementById("questions");
+
+function renderQuiz() {
+  container.innerHTML = "";
+
+  questions.forEach((q, i) => {
+    const section = document.createElement("section");
+    section.className = "question";
+
+    const title = document.createElement("h2");
+    title.textContent = `${i + 1}. ${q.korean}`;
+    section.appendChild(title);
+
+    const spanish = document.createElement("div");
+    spanish.className = "spanish";
+    spanish.textContent = q.spanish;
+    section.appendChild(spanish);
+
+    q.options.forEach((option, j) => {
+      const label = document.createElement("label");
+      const radio = document.createElement("input");
+
+      radio.type = "radio";
+      radio.name = `question-${i}`;
+      radio.value = j;
+      radio.addEventListener("change", () => checkAnswer(i, j));
+
+      label.appendChild(radio);
+      label.appendChild(document.createTextNode(option));
+      section.appendChild(label);
+    });
+
+    const feedback = document.createElement("div");
+    feedback.className = "feedback";
+    feedback.id = `feedback-${i}`;
+    feedback.setAttribute("aria-live", "polite");
+    section.appendChild(feedback);
+
+    container.appendChild(section);
+  });
+}
+
+function checkAnswer(i, selected) {
+  const q = questions[i];
+  const feedback = document.getElementById(`feedback-${i}`);
+  const correct = selected === q.answer;
+
+  feedback.className = "feedback " + (correct ? "correct" : "wrong");
+  feedback.style.display = "block";
+  feedback.textContent = correct
+    ? "✓ 정답입니다! " + q.explanation
+    : "정답: " + q.options[q.answer] + ". " + q.explanation;
+}
+
+function resetQuiz() {
+  renderQuiz();
+}
+
+renderQuiz();
+</script>
